@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import TodoCard from "../elements/TodoCard";
+import TodoCard from "./TodoCard";
 import { __getTodos } from "../redux/modules/todoSlice";
 
 const TodoList = () => {
