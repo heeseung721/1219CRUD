@@ -52,7 +52,7 @@ const Form = () => {
 export default Form;
 
 const FormBox = styled.div`
-  width: 1220px;
+  width: 620px;
   height: 100px;
   margin-top: 30px;
   border: 2px solid #008080;
