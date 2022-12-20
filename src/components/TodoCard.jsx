@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { __deleteTodo, __updateTodo } from "../redux/modules/todoSlice";
+import {
+  __deleteTodo,
+  __updateTodo,
+  __isdoneTodo,
+} from "../redux/modules/todoSlice";
 
 const TodoCard = ({ todo }) => {
   const dispatch = useDispatch();
@@ -21,14 +25,20 @@ const TodoCard = ({ todo }) => {
     setUpdateId(true);
   };
 
-  const updateHandler = () => {
-    dispatch(__updateTodo(input));
+  const updateHandler = (id) => {
+    dispatch(__updateTodo({ id, input }));
     setUpdateId(false);
   };
 
+  //완료/취소 부분 ---
+  const isDoneHandler = () => {
+    const updateIsDone = { id: todo.id, isDone: todo.isDone };
+    dispatch(__isdoneTodo(updateIsDone));
+  };
+  console.log(todo.isDone);
+
   return (
     <CardBox>
-      <input type="checkbox"></input>
       {updateId !== true ? (
         <TitleSpan>{todo.title}</TitleSpan>
       ) : (
@@ -42,12 +52,13 @@ const TodoCard = ({ todo }) => {
         <button onClick={() => makeUpdateMode(todo.id)}>수정</button>
       ) : (
         <>
-          <button onClick={updateHandler}>수정완료</button>
+          <button onClick={() => updateHandler(todo.id)}>수정완료</button>
           <button onClick={() => setUpdateId(false)}>취소</button>
         </>
       )}
 
       <button onClick={() => deleteHandler(todo.id)}>삭제</button>
+      <button onClick={isDoneHandler}>완료</button>
     </CardBox>
   );
 };

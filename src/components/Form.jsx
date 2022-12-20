@@ -12,12 +12,12 @@ const Form = () => {
 
   const addSubmitHandler = (e) => {
     e.preventDefault();
-    const param = {
+    const todo = {
       ...input,
       id: Math.floor(Math.random() * 1000),
-      todo: input,
+      isDone: false,
     };
-    dispatch(__addTodo(param));
+    dispatch(__addTodo(todo));
     setInput({ title: "" });
   };
 

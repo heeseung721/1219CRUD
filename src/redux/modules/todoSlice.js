@@ -10,9 +10,8 @@ const initialState = {
   isLoading: false,
   error: null,
 };
-console.log(initialState);
 
-export const __getTodos = createAsyncThunk(
+export const __getTodo = createAsyncThunk(
   "todos/getTodos", //action value
   async (payload, thunkAPI) => {
     //구현하고 싶은 함수가 들어감
@@ -27,28 +26,34 @@ export const __getTodos = createAsyncThunk(
   }
 );
 
-export const __getTodo = createAsyncThunk(
-  "todos/getTodo",
+export const __addTodo = createAsyncThunk(
+  "todos/addTodo",
   async (payload, thunkAPI) => {
+    console.log(payload);
     try {
-      const { data } = await axios.get(
-        `http://localhost:3001/todos/${payload}`
-      );
-      return thunkAPI.fulfillWithValue(data);
+      const todo = await axios.post("http://localhost:3001/todos", payload);
+      return thunkAPI.fulfillWithValue(todo.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
 
-export const __addTodo = createAsyncThunk(
-  "todos/addTodo",
+export const __isdoneTodo = createAsyncThunk(
+  "todos/isdoneTodo",
   async (payload, thunkAPI) => {
+    console.log(payload);
     try {
-      const todo = await axios.post("http://localhost:3001/todos", payload);
-      return thunkAPI.fulfillWithValue(todo.data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      const todo = await axios.patch(
+        `http://localhost:3001/todos/${payload.id}`,
+        {
+          isDone: !payload.isDone,
+        }
+      );
+      console.log(todo);
+      return thunkAPI.fulfillWithValue(payload.id);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err);
     }
   }
 );
@@ -67,10 +72,14 @@ export const __deleteTodo = createAsyncThunk(
 
 export const __updateTodo = createAsyncThunk(
   "todos/updateTodo",
-  async (id, thunkAPI) => {
+  async (payload, thunkAPI) => {
+    // console.log(payload);
     try {
-      const todo = await axios.patch(`http://localhost:3001/todos/${id}`);
-      return thunkAPI.fulfillWithValue(id);
+      const todo = await axios.patch(
+        `http://localhost:3001/todos/${payload.id}`,
+        { title: payload.input }
+      );
+      return thunkAPI.fulfillWithValue(todo.data);
     } catch (err) {
       return thunkAPI.rejectWithValue(err);
     }
@@ -82,30 +91,13 @@ const todoSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    //__getTodos
-    [__getTodos.pending]: (state) => {
-      state.isLoading = true;
-      //네트워크 요청이 시작되면 로딩 상태를 true로 변경
-    },
-    [__getTodos.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      //네트워크 요청이 끝났으니 false로 변경
-      state.todos = action.payload;
-      //store에 있는 todos 서버에서 가져온 todos를 넣음
-    },
-    [__getTodos.rejected]: (state, action) => {
-      state.isLoading = false;
-      //에러가 발생했지만, 네트워크 요청이 끝났으니 false 로 변경
-      state.error = action.payload;
-      //catch된 error 객체를 state.error에 넣음
-    },
     // __getTodo
     [__getTodo.pending]: (state) => {
       state.isLoading = true;
     },
     [__getTodo.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.detail = action.payload;
+      state.todos = action.payload;
     },
     [__getTodo.rejected]: (state, action) => {
       state.isLoading = false;
@@ -152,6 +144,26 @@ const todoSlice = createSlice({
       });
     },
     [__updateTodo.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    // __isdoneTodo
+    [__isdoneTodo.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [__isdoneTodo.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      console.log(action.payload);
+      state.todos.map((el) =>
+        el.id === action.payload
+          ? {
+              ...el,
+              isDone: !el.isDone,
+            }
+          : el
+      );
+    },
+    [__isdoneTodo.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },

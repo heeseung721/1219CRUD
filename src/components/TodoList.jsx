@@ -2,14 +2,14 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import TodoCard from "./TodoCard";
-import { __getTodos } from "../redux/modules/todoSlice";
+import { __getTodo } from "../redux/modules/todoSlice";
 
 const TodoList = () => {
   const dispatch = useDispatch();
   const { isLoading, error, todos } = useSelector((state) => state.todos);
 
   useEffect(() => {
-    dispatch(__getTodos());
+    dispatch(__getTodo());
   }, [dispatch]);
 
   if (isLoading) {
