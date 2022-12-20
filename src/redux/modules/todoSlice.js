@@ -154,7 +154,7 @@ const todoSlice = createSlice({
     [__isdoneTodo.fulfilled]: (state, action) => {
       state.isLoading = false;
       console.log(action.payload);
-      state.todos.map((el) =>
+      state.todos = state.todos.map((el) =>
         el.id === action.payload
           ? {
               ...el,

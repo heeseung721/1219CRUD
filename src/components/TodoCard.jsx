@@ -35,7 +35,6 @@ const TodoCard = ({ todo }) => {
     const updateIsDone = { id: todo.id, isDone: todo.isDone };
     dispatch(__isdoneTodo(updateIsDone));
   };
-  console.log(todo.isDone);
 
   return (
     <CardBox>
@@ -58,7 +57,7 @@ const TodoCard = ({ todo }) => {
       )}
 
       <button onClick={() => deleteHandler(todo.id)}>삭제</button>
-      <button onClick={isDoneHandler}>완료</button>
+      <button onClick={isDoneHandler}>{todo.isDone ? "취소" : "완료"}</button>
     </CardBox>
   );
 };
